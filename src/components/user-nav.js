@@ -17,7 +17,7 @@ import {
 // import { Logo } from 'src/components/logo';
 import Logo from '../../../public/favicon-16x16.png';
 import { Scrollbar } from 'src/components/scrollbar';
-import { items } from './user-config';
+import { items } from 'src/components/user-config';
 import { UserNavItem } from './user-nav-items';
 
 export const UserNav = (props) => {
