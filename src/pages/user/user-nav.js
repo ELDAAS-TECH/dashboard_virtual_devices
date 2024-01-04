@@ -18,7 +18,7 @@ import {
 import Logo from '../../../public/favicon-16x16.png';
 import { Scrollbar } from 'src/components/scrollbar';
 import { items } from './user-config';
-import { UserNavItem } from './user-nav-item';
+import { UserNavItem } from './user-nav-items';
 
 export const UserNav = (props) => {
   const { open, onClose } = props;
