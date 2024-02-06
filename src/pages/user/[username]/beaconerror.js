@@ -8,7 +8,7 @@ import Beaconerrortable from './beaconerror-table';
 
 const LogPage = () => {
   const router = useRouter();
-  const { username } = router.query;
+  const { username, email } = router.query;
 
 
   return (

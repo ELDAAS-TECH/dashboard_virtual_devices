@@ -322,7 +322,7 @@ const Materialtable = ({ onSelectedSubValuesChange }) => {
 
                 router.push({
                     pathname: `/user/${username}`,
-                    query: { isBeaconAlive, isGarageAlive },
+                    query: { isBeaconAlive, isGarageAlive, email },
                 });
             })
             .catch((error) => {

@@ -20,8 +20,8 @@ const Devicetable = () => {
     const fetchData = async () => {
         try {
             const idToken = localStorage.getItem('idToken');
-            const { username } = router.query;
-            if (!username) {
+            const {email } = router.query;
+            if (!email) {
                 console.error('Username not provided in the URL.');
                 return;
             }
@@ -32,7 +32,7 @@ const Devicetable = () => {
                 },
             });
 
-            const user = response.data['AWS-result'].find(user => user.family_name === username);
+            const user = response.data['AWS-result'].find(user => user.email === email);
 
             if (!user) {
                 console.error(`User with username ${username} not found.`);

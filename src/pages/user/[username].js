@@ -72,7 +72,7 @@ function a11yProps(index) {
 const UserPage = () => {
   const [userId, setUserId] = useState(null);
   const router = useRouter();
-  const { username } = router.query;
+  const { username, email } = router.query;
   const { isBeaconAlive, isGarageAlive } = router.query;
   const booleanIsBeaconAlive = isBeaconAlive === 'true';
   const booleanIsGarageAlive = isGarageAlive === 'true';
@@ -131,7 +131,7 @@ const UserPage = () => {
     const fetchData = async () => {
       try {
         const idToken = localStorage.getItem('idToken');
-        const { username } = router.query;
+        const { username, email } = router.query;
 
         if (!username) {
           console.error('Username not provided in the URL.');
@@ -143,7 +143,8 @@ const UserPage = () => {
           },
         });
 
-        const user = response.data['AWS-result'].find(user => user.family_name === username);
+        // const user = response.data['AWS-result'].find(user => user.family_name === username);
+        const user = response.data['AWS-result'].find(user => user.email === email);
 
         if (!user) {
           console.error(`User with username ${username} not found.`);
@@ -176,7 +177,7 @@ const UserPage = () => {
     };
 
     fetchData();
-  }, [username]);
+  }, [username, email]);
 
   useEffect(() => {
     if (defaultSettings) {

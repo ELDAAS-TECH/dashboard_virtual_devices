@@ -14,9 +14,9 @@ const Emergencytable = () => {
         const fetchData = async () => {
             try {
                 const idToken = localStorage.getItem('idToken');
-                const { username } = router.query;
+                const { username, email } = router.query;
 
-                if (!username) {
+                if (!email) {
                     console.error('Username not provided in the URL.');
                     return;
                 }
@@ -26,7 +26,7 @@ const Emergencytable = () => {
                     },
                 });
 
-                const user = response.data['AWS-result'].find(user => user.family_name === username);
+                const user = response.data['AWS-result'].find(user => user.email === email);
 
                 if (!user) {
                     console.error(`User with username ${username} not found.`);

@@ -28,8 +28,8 @@ const UserDetails = () => {
     const fetchData = async () => {
         try {
             const idToken = localStorage.getItem('idToken');
-            const { username } = router.query;
-            if (!username) {
+            const { email } = router.query;
+            if (!email) {
                 console.error('Username not provided in the URL.');
                 return;
             }
@@ -40,7 +40,8 @@ const UserDetails = () => {
                 },
             });
 
-            const user = response.data['AWS-result'].find(user => user.family_name === username);
+            // const user = response.data['AWS-result'].find(user => user.family_name === username);
+            const user = response.data['AWS-result'].find(user => user.email === email);
             const address1 = user.address;
             const pinCodePattern = /\b\d{6}\b/;
             const match = address1.match(pinCodePattern);
@@ -60,7 +61,7 @@ const UserDetails = () => {
             const userId = user.sub;
             const firstName = user.given_name;
             const lastName = user.family_name;
-            const email = user.email;
+            // const email = user.email;
 
             const phone_number = user.phone_number;
             const cleanedNumber = phone_number.replace(/\D/g, '');
