@@ -23,6 +23,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import axios from 'axios';
 
 const now = new Date();
@@ -47,6 +49,8 @@ const Page = () => {
   const [defaultSettings, setDefaultSettings] = useState(null);
 
   const [value, setValue] = React.useState(0);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
 
 
@@ -210,8 +214,12 @@ const Page = () => {
       if (response.status !== 200) {
         throw new Error('Failed to save data');
       }
+      setSnackbarMessage('Device settings updated successfully');
+      setSnackbarOpen(true);
       console.log('Data saved successfully');
     } catch (error) {
+      setSnackbarMessage('Error saving data');
+    setSnackbarOpen(true);
       console.error('Error saving data:', error);
     }
   };
@@ -221,6 +229,7 @@ const Page = () => {
 
     validSubValues.forEach((sub) => {
       handleSubmit(sub.sub);
+      handleClose();
     });
   };
 
@@ -259,6 +268,10 @@ const Page = () => {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
@@ -415,8 +428,23 @@ const Page = () => {
                   }}>
                     Save
                   </Button>
+                  
                 </DialogActions>
               </BootstrapDialog>
+              <Snackbar
+                    open={snackbarOpen}
+                    autoHideDuration={6000} // Adjust the duration as needed
+                    onClose={handleSnackbarClose}
+                  >
+                    <MuiAlert
+                      elevation={6}
+                      variant="filled"
+                      onClose={handleSnackbarClose}
+                      severity={snackbarMessage.includes('Error') ? 'error' : 'success'}
+                    >
+                      {snackbarMessage}
+                    </MuiAlert>
+                  </Snackbar>
             </Stack>
 
 
