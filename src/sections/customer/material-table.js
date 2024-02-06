@@ -508,7 +508,7 @@ const Materialtable = ({ onSelectedSubValuesChange }) => {
                 backgroundColor: getBackgroundColor(row.original),
             }
         }),
-        RenderDetailPanel,
+        renderDetailPanel: RenderDetailPanel,
 
     });
 
