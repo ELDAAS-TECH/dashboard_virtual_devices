@@ -1,43 +1,42 @@
-import ChartBarIcon from '@heroicons/react/24/solid/ChartBarIcon';
-import CogIcon from '@heroicons/react/24/solid/CogIcon';
-import LockClosedIcon from '@heroicons/react/24/solid/LockClosedIcon';
-import ShoppingBagIcon from '@heroicons/react/24/solid/ShoppingBagIcon';
-import UserIcon from '@heroicons/react/24/solid/UserIcon';
-import UserPlusIcon from '@heroicons/react/24/solid/UserPlusIcon';
-import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
-import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
-import { SvgIcon } from '@mui/material';
+import ChartBarIcon from "@heroicons/react/24/solid/ChartBarIcon";
+import CogIcon from "@heroicons/react/24/solid/CogIcon";
+import LockClosedIcon from "@heroicons/react/24/solid/LockClosedIcon";
+import ShoppingBagIcon from "@heroicons/react/24/solid/ShoppingBagIcon";
+import UserIcon from "@heroicons/react/24/solid/UserIcon";
+import UserPlusIcon from "@heroicons/react/24/solid/UserPlusIcon";
+import UsersIcon from "@heroicons/react/24/solid/UsersIcon";
+import XCircleIcon from "@heroicons/react/24/solid/XCircleIcon";
+import { SvgIcon } from "@mui/material";
 
 export const items = [
- 
-//   {
-//     title: 'Users',
-//     path: '/customers',
-//     icon: (
-//       <SvgIcon fontSize="small">
-//         <UsersIcon />
-//       </SvgIcon>
-//     )
-//   },
+  //   {
+  //     title: 'Users',
+  //     path: '/customers',
+  //     icon: (
+  //       <SvgIcon fontSize="small">
+  //         <UsersIcon />
+  //       </SvgIcon>
+  //     )
+  //   },
   {
-    title: 'Settings',
-    path: '/usersettings',
+    title: "Settings",
+    path: "/usersettings",
     icon: (
       <SvgIcon fontSize="large">
-        <CogIcon color='black' />
+        <CogIcon color="black" />
       </SvgIcon>
-    )
+    ),
   },
-//   {
-//     title: 'Logout',
-//     path: '/auth/login',
-//     icon: (
-//       <SvgIcon fontSize="small">
-//         <LockClosedIcon />
-//       </SvgIcon>
-//     )
-//   }
-   // {
+  //   {
+  //     title: 'Logout',
+  //     path: '/auth/login',
+  //     icon: (
+  //       <SvgIcon fontSize="small">
+  //         <LockClosedIcon />
+  //       </SvgIcon>
+  //     )
+  //   }
+  // {
   //   title: 'Overview',
   //   path: '/',
   //   icon: (
@@ -64,7 +63,7 @@ export const items = [
   //     </SvgIcon>
   //   )
   // },
-  
+
   // {
   //   title: 'Register',
   //   path: '/auth/register',

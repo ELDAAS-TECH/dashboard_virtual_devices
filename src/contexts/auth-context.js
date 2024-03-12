@@ -1,16 +1,18 @@
 // auth-context.js
 
-import { createContext, useContext, useEffect, useReducer, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
-import axios from 'axios';
+import { createContext, useContext, useEffect, useReducer, useRef, useState } from "react";
+import PropTypes from "prop-types";
+import axios from "axios";
+import { set } from "nprogress";
 
 const HANDLERS = {
-  INITIALIZE: 'INITIALIZE',
-  SIGN_IN: 'SIGN_IN',
-  SIGN_OUT: 'SIGN_OUT',
+  INITIALIZE: "INITIALIZE",
+  SIGN_IN: "SIGN_IN",
+  SIGN_OUT: "SIGN_OUT",
 };
 
 const initialState = {
+  isInitialized: false,
   isAuthenticated: false,
   isLoading: true,
   user: null,
@@ -18,19 +20,11 @@ const initialState = {
 
 const handlers = {
   [HANDLERS.INITIALIZE]: (state, action) => {
-    const user = action.payload;
-
     return {
-      ...state,
-      ...(user
-        ? {
-            isAuthenticated: true,
-            isLoading: false,
-            user,
-          }
-        : {
-            isLoading: false,
-          }),
+      isInitialized: true,
+      isAuthenticated: action.payload.isAuthenticated,
+      isLoading: false,
+      user: action?.payload?.user,
     };
   },
   [HANDLERS.SIGN_IN]: (state, action) => {
@@ -38,6 +32,7 @@ const handlers = {
 
     return {
       ...state,
+      isInitialized: true,
       isAuthenticated: true,
       user,
     };
@@ -51,60 +46,57 @@ const handlers = {
   },
 };
 
-const reducer = (state, action) => (handlers[action.type] ? handlers[action.type](state, action) : state);
+const reducer = (state, action) =>
+  handlers[action.type] ? handlers[action.type](state, action) : state;
 
 export const AuthContext = createContext({ undefined });
 
 export const AuthProvider = (props) => {
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialState);
-  const initialized = useRef(false);
   const [user, setUser] = useState(null);
 
-  const isAuthenticated = () => {
-    return Boolean(user);
-  };
-
   const initialize = async () => {
-    if (initialized.current) {
-      return;
-    }
-
-    initialized.current = true;
-
-    let isAuthenticated = false;
-
+    const idToken = localStorage.getItem("idToken");
     try {
-      isAuthenticated = window.sessionStorage.getItem('authenticated') === 'true';
-      console.log('Is Authenticated:', isAuthenticated);
-    } catch (err) {
-      console.error(err);
-    }
+      const config = {
+        method: "get",
+        maxBodyLength: Infinity,
+        url: `https://m1kiyejux4.execute-api.us-west-1.amazonaws.com/dev/api/v1/users/getUsers`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+      };
 
-    if (isAuthenticated) {
-      try {
-        const idToken = localStorage.getItem('idToken');
-
-        const response = await axios.get('https://m1kiyejux4.execute-api.us-west-1.amazonaws.com/dev/api/v1/users/getUsers', {
-          headers: {
-            Authorization: `Bearer ${idToken}`,
-          },
-        });
-
+      if (idToken) {
+        const response = await axios.request(config);
         const user = response.data;
 
+        setUser(user);
         dispatch({
           type: HANDLERS.SIGN_IN,
-          payload: user,
+
+          payload: {
+            user,
+            isAuthenticated: true,
+          },
         });
-      } catch (error) {
-        console.error('Error fetching user information:', error);
-        // Handle error fetching user information if needed
+      } else {
+        dispatch({
+          type: HANDLERS.INITIALIZE,
+          payload: {
+            isAuthenticated: false,
+            user: null,
+          },
+        });
       }
-    } else {
-      dispatch({
-        type: HANDLERS.INITIALIZE,
-      });
+    } catch (error) {
+      if (error?.response?.data?.message === "The incoming token has expired") {
+        refreshTokenApi();
+      }
+      console.error("Error fetching user information:", error);
+      // Handle error fetching user information if needed
     }
   };
 
@@ -112,18 +104,47 @@ export const AuthProvider = (props) => {
     initialize();
   }, []);
 
+  //to refresh the ID Token If it is expired
+  const refreshTokenApi = async () => {
+    const refreshToken = localStorage.getItem("refreshToken");
+    try {
+      const config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: `https://gbfgs2m6df.execute-api.us-west-1.amazonaws.com/dev/api/v1/public/refreshTokens`,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: {
+          refreshToken: refreshToken,
+        },
+      };
+
+      if (refreshToken) {
+        const response = await axios.request(config);
+        const idToken = response.data?.tokens?.idToken;
+        localStorage.setItem("idToken", idToken);
+        if (idToken) {
+          initialize();
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching user information:", error);
+      // Handle error fetching user information if needed
+    }
+  };
   const skip = () => {
     try {
-      window.sessionStorage.setItem('authenticated', 'true');
+      window.sessionStorage.setItem("authenticated", "true");
     } catch (err) {
       console.error(err);
     }
 
     const user = {
-      id: '5e86809283e28b96d2d38537',
-      avatar: '/assets/avatars/avatar-anika-visser.png',
-      name: 'Anika Visser',
-      email: 'anika.visser@devias.io',
+      id: "5e86809283e28b96d2d38537",
+      avatar: "/assets/avatars/avatar-anika-visser.png",
+      name: "Anika Visser",
+      email: "anika.visser@devias.io",
     };
 
     dispatch({
@@ -133,42 +154,54 @@ export const AuthProvider = (props) => {
   };
 
   const signIn = async (email, password) => {
-    console.log('Signing in...');
+    console.log("Signing in...");
     try {
-      const response = await axios.post('https://gbfgs2m6df.execute-api.us-west-1.amazonaws.com/dev/api/v1/public/signin', {
-        email,
-        password,
-      });
-  
+      const response = await axios.post(
+        "https://gbfgs2m6df.execute-api.us-west-1.amazonaws.com/dev/api/v1/public/signin",
+        {
+          email,
+          password,
+        }
+      );
+
       // Assuming your API response structure has a 'success' property
       if (response.data.success) {
         // You may need to adapt this based on the actual structure of your API response
         const user = response.data.data.AuthenticationResult;
-  
+        const idToken = response.data.data.AuthenticationResult.IdToken;
+        const refreshToken = response.data.data.AuthenticationResult.RefreshToken;
+        setUser(user);
+
+        // Store the idToken in local storage
+        localStorage.setItem("idToken", idToken);
+        localStorage.setItem("refreshToken", refreshToken);
         dispatch({
           type: HANDLERS.SIGN_IN,
           payload: user,
         });
-  
-        window.sessionStorage.setItem('authenticated', 'true');
+
+        window.sessionStorage.setItem("authenticated", "true");
+        return response;
       } else {
         // Handle unsuccessful login
-        console.error('Authentication failed:', response.data.error);
-        throw new Error('Authentication failed. Please check your credentials.');
+        console.error("Authentication failed:", response.data.error);
+        throw new Error("Authentication failed. Please check your credentials.");
       }
     } catch (error) {
-      console.error('An error occurred while processing the request:', error);
-      throw new Error('An error occurred while processing your request.');
+      console.error("An error occurred while processing the request:", error);
+      throw new Error("An error occurred while processing your request.");
     }
   };
-  
 
   const signUp = async (email, name, password) => {
     // Implementation for sign-up can be added here if needed
-    throw new Error('Sign up is not implemented');
+    throw new Error("Sign up is not implemented");
   };
 
   const signOut = () => {
+    console.log("logout--");
+    localStorage.removeItem("idToken");
+    window.sessionStorage.remove("authenticated");
     dispatch({
       type: HANDLERS.SIGN_OUT,
     });
@@ -177,7 +210,7 @@ export const AuthProvider = (props) => {
   return (
     <AuthContext.Provider
       value={{
-        isAuthenticated,
+        state,
         user,
         skip,
         signIn,

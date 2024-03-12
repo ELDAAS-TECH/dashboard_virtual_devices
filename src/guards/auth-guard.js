@@ -1,53 +1,59 @@
-import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/router';
-import PropTypes from 'prop-types';
-import { useAuthContext } from 'src/contexts/auth-context';
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/router";
+import PropTypes from "prop-types";
+import { useAuthContext } from "src/contexts/auth-context";
+import { usePathname } from "next/navigation";
+import LoadingScreen from "src/components/loading-screen/LoadingScreen";
 
 export const AuthGuard = (props) => {
   const { children } = props;
+
   const router = useRouter();
-  const { isAuthenticated, user } = useAuthContext();
+  const { state } = useAuthContext();
   const ignore = useRef(false);
-  const [checked, setChecked] = useState(false);
+  const [requestedLocation, setRequestedLocation] = useState(null);
 
-  useEffect(
-    () => {
-      if (!router.isReady) {
-        return;
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (!router.isReady) {
+      return;
+    }
+
+    // Prevent from calling twice in development mode with React.StrictMode enabled
+    if (ignore.current) {
+      return;
+    }
+
+    ignore.current = true;
+
+    if (!state?.isAuthenticated) {
+      if (pathname !== requestedLocation) {
+        setRequestedLocation(pathname);
       }
-
-      // Prevent from calling twice in development mode with React.StrictMode enabled
-      if (ignore.current) {
-        return;
-      }
-
-      ignore.current = true;
-
-      if (!isAuthenticated) {
-        console.log('Not authenticated, redirecting');
-        router
-          .replace({
-            pathname: '/auth/login',
-            query: router.asPath !== '/' ? { continueUrl: router.asPath } : undefined
-          })
-          .catch(console.error);
-      } else {
-        setChecked(true);
-      }
-    },
-    [isAuthenticated, router.isReady]
-  );
-
-  if (!checked) {
-    return null;
+      router
+        .replace({
+          pathname: "/auth/login",
+          query: router.asPath !== "/" ? { continueUrl: router.asPath } : undefined,
+        })
+        .catch(console.error);
+    }
+    if (requestedLocation && pathname !== requestedLocation) {
+      setRequestedLocation(null);
+      router
+        .replace({
+          pathname: requestedLocation,
+          query: router.asPath !== "/" ? { continueUrl: router.asPath } : undefined,
+        })
+        .catch(console.error);
+    }
+  }, [state?.isAuthenticated, router.isReady, state?.isInitialized]);
+  if (!state?.isInitialized) {
+    return <LoadingScreen />;
   }
-
-  // If got here, it means that the redirect did not occur, and that tells us that the user is
-  // authenticated / authorized.
-
   return children;
 };
 
 AuthGuard.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
 };
