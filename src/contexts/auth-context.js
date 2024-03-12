@@ -58,6 +58,9 @@ export const AuthProvider = (props) => {
 
   const initialize = async () => {
     const idToken = localStorage.getItem("idToken");
+    if (!idToken) {
+      throw new Error("No idToken found in localStorage");
+    }
     try {
       const config = {
         method: "get",
