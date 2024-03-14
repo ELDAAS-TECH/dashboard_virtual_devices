@@ -98,37 +98,37 @@ const Materialtable = ({ onSelectedSubValuesChange }) => {
         const firstName = user.given_name;
         setfirstName(firstName || "N/A");
 
-        // try {
-        //   const secondresponse = await axios.post(
-        //     `https://m1kiyejux4.execute-api.us-west-1.amazonaws.com/dev/api/v1/devices/getDeviceStatus/${userId}`,
-        //     {
-        //       user_id: userId,
-        //     },
-        //     {
-        //       headers: {
-        //         Authorization: `Bearer ${idToken}`,
-        //       },
-        //     }
-        //   );
+        try {
+          const secondresponse = await axios.post(
+            `https://m1kiyejux4.execute-api.us-west-1.amazonaws.com/dev/api/v1/devices/getDeviceStatus/${userId}`,
+            {
+              user_id: userId,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${idToken}`,
+              },
+            }
+          );
 
-        //   const apiData = secondresponse.data;
-        //   const isBeaconAlive =
-        //     apiData && apiData.device_data && apiData.device_data.get_beacon_alive_status === false;
-        //   const isGarageAlive =
-        //     apiData && apiData.device_data && apiData.device_data.get_garage_alive_status === false;
-        //   const backgroundColor = isGarageAlive || isBeaconAlive ? "red" : "inherit";
+          const apiData = secondresponse.data;
+          const isBeaconAlive =
+            apiData && apiData.device_data && apiData.device_data.get_beacon_alive_status === false;
+          const isGarageAlive =
+            apiData && apiData.device_data && apiData.device_data.get_garage_alive_status === false;
+          const backgroundColor = isGarageAlive || isBeaconAlive ? "red" : "inherit";
 
-        //   setRowBackgroundColors((prevColors) => ({
-        //     ...prevColors,
-        //     [userId]: backgroundColor,
-        //   }));
-        // } catch (error) {
-        //   console.error(`Error fetching data for user ${user.sub}:`, error.message);
-        //   setRowBackgroundColors((prevColors) => ({
-        //     ...prevColors,
-        //     [user.sub]: "inherit",
-        //   }));
-        // }
+          setRowBackgroundColors((prevColors) => ({
+            ...prevColors,
+            [userId]: backgroundColor,
+          }));
+        } catch (error) {
+          console.error(`Error fetching data for user ${user.sub}:`, error.message);
+          setRowBackgroundColors((prevColors) => ({
+            ...prevColors,
+            [user.sub]: "inherit",
+          }));
+        }
       });
 
       const updatedData = usersData.map((user) => ({
