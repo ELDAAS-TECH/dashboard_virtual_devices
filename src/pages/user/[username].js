@@ -240,11 +240,9 @@ const UserPage = () => {
   const handleSubmit = async () => {
     try {
       const idToken = localStorage.getItem("idToken");
-      const apiUrl =
-        "https://m1kiyejux4.execute-api.us-west-1.amazonaws.com/dev/api/v1/devices/storeDeviceProps/";
-
       const dataToSend = {
         user_id: userId,
+        Individual: true,
         R: beaconData.color.r,
         G: beaconData.color.g,
         B: beaconData.color.b,
@@ -257,14 +255,18 @@ const UserPage = () => {
         buzz_DURATION: buzzerData.duration,
         charge_control: chargeControlData.minBatteryPercentage,
       };
-
-      console.log("Data to send:", dataToSend);
-      const response = await axios.post(apiUrl, dataToSend, {
+      console.log(dataToSend, "data");
+      const config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: `https://m1kiyejux4.execute-api.us-west-1.amazonaws.com/dev/api/v1/devices/storeDeviceProps/`,
         headers: {
-          Authorization: `Bearer ${idToken}`,
-          "Content-Type": "application/json",
+          authorization: `Bearer ${idToken}`,
         },
-      });
+        data: dataToSend,
+      };
+
+      const response = await axios.request(config);
       console.log("API Response:", response);
       if (response.status !== 200) {
         throw new Error("Failed to save data");

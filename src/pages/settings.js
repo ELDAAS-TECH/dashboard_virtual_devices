@@ -142,15 +142,12 @@ const Page = () => {
     // Handle saving data or API calls here based on section
     switch (section) {
       case "beacon":
-        alert("Saving Beacon Data:" + beaconData.color);
         console.log("Saving Beacon Data:", beaconData);
         break;
       case "buzzer":
-        alert("Saving Buzzer Data: " + buzzerData);
         console.log("Saving Buzzer Data:", buzzerData);
         break;
       case "chargeControl":
-        alert("Saving Charge Control Data: " + chargeControlData.minBatteryPercentage + "%");
         console.log("Saving Charge Control Data:", chargeControlData.minBatteryPercentage);
         break;
       default:
@@ -194,45 +191,46 @@ const Page = () => {
     fetchData();
   }, [username]);
 
-  // const handleSubmit = async () => {
-  //   try {
-  //     const idToken = localStorage.getItem('idToken');
-  //     const apiUrl = 'https://m1kiyejux4.execute-api.us-west-1.amazonaws.com/dev/api/v1/devices/storeDeviceProps/';
+  const handleSubmit = async () => {
+    try {
+      const idToken = localStorage.getItem("idToken");
 
-  //     const dataToSend = {
-  //       user_id: userId,
-  //       R: beaconData.color.r,
-  //       G: beaconData.color.g,
-  //       B: beaconData.color.b,
-  //       brightness: brightness,
-  //       led_ON_TIME: beaconData.onTime,
-  //       led_OFF_TIME: beaconData.offTime,
-  //       led_DURATION: beaconData.duration,
-  //       buzz_ON_TIME: buzzerData.onTime,
-  //       buzz_OFF_TIME: buzzerData.offTime,
-  //       buzz_DURATION: buzzerData.duration,
-  //       charge_control: chargeControlData.minBatteryPercentage,
-  //     };
+      const dataToSend = {
+        user_id: userId,
+        Individual: false,
+        R: beaconData.color.r,
+        G: beaconData.color.g,
+        B: beaconData.color.b,
+        brightness: brightness,
+        led_ON_TIME: beaconData.onTime,
+        led_OFF_TIME: beaconData.offTime,
+        led_DURATION: beaconData.duration,
+        buzz_ON_TIME: buzzerData.onTime,
+        buzz_OFF_TIME: buzzerData.offTime,
+        buzz_DURATION: buzzerData.duration,
+        charge_control: chargeControlData.minBatteryPercentage,
+      };
 
-  //     console.log('Data to send:', dataToSend);
+      const config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: `https://m1kiyejux4.execute-api.us-west-1.amazonaws.com/dev/api/v1/devices/storeDeviceProps/`,
+        headers: {
+          authorization: `Bearer ${idToken}`,
+        },
+        data: dataToSend,
+      };
 
-  //     const response = await axios.post(apiUrl, dataToSend,
-  //       {
-  //         headers: {
-  //             Authorization: `Bearer ${idToken}`,
-  //             'Content-Type': 'application/json',
-  //         },
-  //     });
-  //     console.log('API Response:', response);
+      const response = await axios.request(config);
 
-  //     if (response.status !== 200) {
-  //       throw new Error('Failed to save data');
-  //     }
-  //     console.log('Data saved successfully');
-  //   } catch (error) {
-  //     console.error('Error saving data:', error);
-  //   }
-  // };
+      if (response.status !== 200) {
+        throw new Error("Failed to save data");
+      }
+      console.log("Data saved successfully");
+    } catch (error) {
+      console.error("Error saving data:", error);
+    }
+  };
 
   return (
     <>

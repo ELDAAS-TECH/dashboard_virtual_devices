@@ -50,6 +50,7 @@ const Page = () => {
   const { username } = router.query;
 
   const [selectedSubValues, setSelectedSubValues] = useState([]);
+
   const [defaultSettings, setDefaultSettings] = useState(null);
 
   const [value, setValue] = React.useState(0);
@@ -188,13 +189,12 @@ const Page = () => {
   };
 
   const handleSubmit = async (sub) => {
-    console.log(sub, "sub=================");
     try {
       const idToken = localStorage.getItem("idToken");
-      const apiUrl =
-        "https://m1kiyejux4.execute-api.us-west-1.amazonaws.com/dev/api/v1/devices/storeDeviceProps/";
+
       const dataToSend = {
         user_id: sub,
+        Individual: true,
         R: beaconData.color.r,
         G: beaconData.color.g,
         B: beaconData.color.b,
@@ -208,14 +208,19 @@ const Page = () => {
         charge_control: chargeControlData.minBatteryPercentage,
       };
 
+      const config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: `https://m1kiyejux4.execute-api.us-west-1.amazonaws.com/dev/api/v1/devices/storeDeviceProps/`,
+        headers: {
+          authorization: `Bearer ${idToken}`,
+        },
+        data: dataToSend,
+      };
+
       console.log("Data to send:", dataToSend);
 
-      const response = await axios.post(apiUrl, dataToSend, {
-        headers: {
-          Authorization: `Bearer ${idToken}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.request(config);
       console.log("API Response:", response);
 
       if (response.status !== 200) {
@@ -297,9 +302,11 @@ const Page = () => {
           <Stack spacing={3}>
             <Stack direction="row" justifyContent="space-between" spacing={4}>
               <Typography variant="h4">Users</Typography>
-              <SvgIcon fontSize="large" style={{ cursor: "pointer" }} onClick={handleClickOpen}>
-                <CogIcon color="black" />
-              </SvgIcon>
+              {selectedSubValues?.some((data) => data.sub) && (
+                <SvgIcon fontSize="large" style={{ cursor: "pointer" }} onClick={handleClickOpen}>
+                  <CogIcon color="black" />
+                </SvgIcon>
+              )}
               <BootstrapDialog
                 onClose={handleClose}
                 aria-labelledby="customized-dialog-title"

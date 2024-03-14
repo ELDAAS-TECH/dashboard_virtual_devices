@@ -1,16 +1,22 @@
 import React, { useState } from "react";
-import { Stack, Typography, Button } from "@mui/material";
+import { Stack, Typography, Button, Snackbar } from "@mui/material";
 import * as XLSX from "xlsx";
-import fileUploadPostApi from "src/services/settings/FileUploadPostApi";
+import fileUploadPostApi from "../../services/settings/fileUploadPostApi";
+import AlertPopup from "../../components/alert-popups/AlertPopup";
 
 function FileUploadComponent() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileName, setFileName] = useState("No file chosen");
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setSelectedFile(file);
     setFileName(file ? file.name : "No file chosen");
+  };
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   const handleUpload = async () => {
@@ -43,8 +49,15 @@ function FileUploadComponent() {
 
         console.log("Processed data uploaded successfully:", tuya_credentials_list);
         try {
-          await fileUploadPostApi(tuya_credentials_list);
+          const response = await fileUploadPostApi(tuya_credentials_list);
+
+          if (response) {
+            setSnackbarMessage("Uploaded Tuya credentials successfully");
+            setSnackbarOpen(true);
+          }
         } catch (error) {
+          setSnackbarMessage("Error uploading processed data:");
+          setSnackbarOpen(true);
           console.error("Error uploading processed data:", error);
         }
       };
@@ -81,6 +94,13 @@ function FileUploadComponent() {
           Upload
         </Button>
       </Stack>
+      {snackbarOpen && (
+        <AlertPopup
+          snackbarOpen={snackbarOpen}
+          handleSnackbarClose={handleSnackbarClose}
+          snackbarMessage={snackbarMessage}
+        />
+      )}
     </Stack>
   );
 }
