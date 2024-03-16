@@ -143,6 +143,7 @@ const UserPage = () => {
       try {
         const idToken = localStorage.getItem("idToken");
         const { username, email } = router.query;
+        console.log(username, email, "email");
 
         if (!username) {
           console.error("Username not provided in the URL.");

@@ -443,7 +443,7 @@ const Materialtable = ({ onSelectedSubValuesChange }) => {
 
                   <TableRow>
                     <TableCell variant="head" sx={{ backgroundColor: "#f3f3f3" }}>
-                      Temprature
+                      Temperature
                     </TableCell>
                     <TableCell> {dropdownData.b_temp}</TableCell>
                   </TableRow>

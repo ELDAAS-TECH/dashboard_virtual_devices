@@ -24,7 +24,7 @@ export const SideNavItem = (props) => {
       : {
           component: NextLink,
           href: path,
-          onClick: handleClick, // Call handleClick function on click
+          onClick: handleClick,
         }
     : {};
 

@@ -64,13 +64,13 @@ function a11yProps(index) {
 
 const Page = () => {
   const [userId, setUserId] = useState(null);
-  const [brightness, setBrightness] = useState(50);
+  // const [brightness, setBrightness] = useState(50);
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
   const router = useRouter();
-  const { username } = router.query;
+  const { username, email } = router.query;
 
   const handleBeconClick = () => {
     router.push("/settings/beacon");
@@ -89,6 +89,7 @@ const Page = () => {
     onTime: "",
     offTime: "",
     duration: "",
+    brightness: "",
   });
 
   const [buzzerData, setBuzzerData] = useState({
@@ -105,7 +106,10 @@ const Page = () => {
   };
 
   const handleBrightnessChange = (event, newValue) => {
-    setBrightness(newValue);
+    setBeaconData((prevData) => ({
+      ...prevData,
+      brightness: newValue,
+    }));
   };
 
   const [chargeControlData, setChargeControlData] = useState({
@@ -160,13 +164,14 @@ const Page = () => {
       try {
         const idToken = localStorage.getItem("idToken");
         const { username } = router.query;
+        // console.log(username, "iserName");
 
-        if (!username) {
-          console.error("Username not provided in the URL.");
-          return;
-        }
-        const response = await axios.get(
-          "https://m1kiyejux4.execute-api.us-west-1.amazonaws.com/dev/api/v1/users/getUsers",
+        // if (!username) {
+        //   console.error("Username not provided in the URL.");
+        //   return;
+        // }
+        const response = await axios.post(
+          "https://m1kiyejux4.execute-api.us-west-1.amazonaws.com/dev/api/v1/devices/storeDeviceProps",
           {
             headers: {
               Authorization: `Bearer ${idToken}`,
@@ -174,15 +179,16 @@ const Page = () => {
           }
         );
 
-        const user = response.data["AWS-result"].find((user) => user.family_name === username);
+        console.log(response, "global settings");
+        // const user = response.data["AWS-result"].find((user) => user.family_name === username);
 
-        if (!user) {
-          console.error(`User with username ${username} not found.`);
-          return;
-        }
+        // if (!user) {
+        //   console.error(`User with username ${username} not found.`);
+        //   return;
+        // }
 
-        const obtainedUserId = user.sub;
-        setUserId(obtainedUserId);
+        // const obtainedUserId = user.sub;
+        // setUserId(obtainedUserId);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -311,11 +317,6 @@ const Page = () => {
               flexGrow: 1,
             }}
           >
-            {/* <Stack spacing={3} >
-                <Typography variant="h4">
-                  User Settings
-                </Typography>
-              </Stack> */}
             <Stack spacing={1}>
               <Container sx={{ display: "-webkit-flex" }}>
                 <Card>
@@ -343,12 +344,12 @@ const Page = () => {
                         <Typography>Brightness:</Typography>
                         <Stack spacing={1} direction="row">
                           <Slider
-                            value={brightness}
+                            value={beaconData.brightness}
                             onChange={handleBrightnessChange}
                             aria-label="Default"
                             valueLabelDisplay="auto"
                           />
-                          <Typography>{brightness}</Typography>
+                          <Typography>{beaconData.brightness}</Typography>
                         </Stack>
                       </Box>
                       <TextField
@@ -435,7 +436,6 @@ const Page = () => {
                   </CardActions>
                 </Card>
               </Container>
-              <Container></Container>
             </Stack>
           </Box>
         </CustomTabPanel>
