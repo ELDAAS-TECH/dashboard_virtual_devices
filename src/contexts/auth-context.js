@@ -63,7 +63,7 @@ export const AuthProvider = (props) => {
       const config = {
         method: "get",
         maxBodyLength: Infinity,
-        url: `https://m1kiyejux4.execute-api.us-west-1.amazonaws.com/dev/api/v1/users/getUsers`,
+        url: `https://m1kiyejux4.execute-api.us-west-1.amazonaws.com/dev/api/v1/users/getUser/cmsathwik44@gmail.com`,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${idToken}`,
@@ -72,7 +72,7 @@ export const AuthProvider = (props) => {
 
       if (idToken) {
         const response = await axios.request(config);
-        const user = response.data;
+        const user = response.data["AWS-result"];
 
         setUser(user);
         dispatch({

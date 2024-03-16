@@ -90,6 +90,19 @@ const UserPage = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [value, setValue] = React.useState(0);
+  const [beaconData, setBeaconData] = useState({
+    color: { r: 0, g: 0, b: 0, a: 1 },
+    brightness: "50",
+    onTime: "",
+    offTime: "",
+    duration: "",
+  });
+
+  const [buzzerData, setBuzzerData] = useState({
+    onTime: "",
+    offTime: "",
+    duration: "",
+  });
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -112,20 +125,6 @@ const UserPage = () => {
     setAnchorElBeacon(null);
     setAnchorElPuck(null);
   };
-
-  const [beaconData, setBeaconData] = useState({
-    color: { r: 0, g: 0, b: 0, a: 1 },
-    brightness: "50",
-    onTime: "",
-    offTime: "",
-    duration: "",
-  });
-
-  const [buzzerData, setBuzzerData] = useState({
-    onTime: "",
-    offTime: "",
-    duration: "",
-  });
 
   const handleColorChange = (color) => {
     setBeaconData((prevData) => ({
@@ -158,8 +157,9 @@ const UserPage = () => {
           }
         );
 
-        // const user = response.data['AWS-result'].find(user => user.family_name === username);
-        const user = response.data["AWS-result"].find((user) => user.email === email);
+        // const user = response.data['AWS-result'].find(user => user.family_name === username);1
+        const user = response.data["AWS-result"].find((user) => user);
+        // console.log(user, "user-----------");
 
         if (!user) {
           console.error(`User with username ${username} not found.`);

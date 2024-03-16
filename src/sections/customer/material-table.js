@@ -288,11 +288,10 @@ const Materialtable = ({ onSelectedSubValuesChange }) => {
   };
 
   const handleRowClick = (row) => {
-    console.log("handleRowClick");
     const username = row.original.family_name;
     const email = row.original.email;
     const body = getSubByEmail(email);
-    console.log(email, body);
+    console.log(row, "initial Row");
     latitude = body.lat;
     longitude = body.lon;
 
@@ -317,6 +316,7 @@ const Materialtable = ({ onSelectedSubValuesChange }) => {
         const isGarageAlive =
           apiData && apiData.device_data && apiData.device_data.get_garage_alive_status === false;
 
+        console.log(email, "lastAt");
         router.push({
           pathname: `/user/${username}`,
           query: { isBeaconAlive, isGarageAlive, email },

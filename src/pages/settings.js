@@ -28,6 +28,7 @@ import { AccountProfileDetails } from "src/sections/account/account-profile-deta
 import PropTypes from "prop-types";
 import axios from "axios";
 import FileUploadComponent from "src/sections/settings/FileUploadComponent";
+import { useAuthContext } from "src/contexts/auth-context";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
