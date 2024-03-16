@@ -10,6 +10,7 @@ import {
   TextField,
   Unstable_Grid2 as Grid,
   Stack,
+  Typography,
 } from "@mui/material";
 import { useAuthContext } from "src/contexts/auth-context";
 
@@ -57,43 +58,46 @@ export const AccountProfileDetails = () => {
   return (
     <form autoComplete="off" noValidate onSubmit={handleSubmit}>
       <Stack spacing={2}>
-        <Grid container spacing={3}>
-          <Grid xs={12} md={6}>
-            <TextField
-              fullWidth
-              helperText="Please specify the first name"
-              label="First name"
-              name="firstName"
-              disabled
-              value={values.firstName}
-            />
-          </Grid>
-          <Grid xs={12} md={6}>
-            <TextField
-              fullWidth
-              disabled
-              label="Last name"
-              name="lastName"
-              value={values.lastName}
-            />
-          </Grid>
-          <Grid xs={12} md={6}>
-            <TextField fullWidth disabled label="Email Address" name="email" value={values.email} />
-          </Grid>
-          <Grid xs={12} md={6}>
-            <TextField
-              fullWidth
-              label="Phone Number"
-              name="phone"
-              disabled
-              type="number"
-              value={values.phone}
-            />
-          </Grid>
-          <Grid xs={12} md={6}>
-            <TextField fullWidth label="address" disabled value={values.address} />
-          </Grid>
-        </Grid>
+        <Stack
+          spacing={1}
+          direction="row"
+          sx={{ border: "1px solid #C9C9C9", p: 2, borderRadius: "5px" }}
+        >
+          <Typography variant="subtitle">First Name :</Typography>
+          <Typography variant="body1">{values.firstName}</Typography>
+        </Stack>
+        <Stack
+          spacing={1}
+          direction="row"
+          sx={{ border: "1px solid #C9C9C9", p: 2, borderRadius: "5px" }}
+        >
+          <Typography variant="subtitle">Last Name :</Typography>
+          <Typography variant="body1">{values.lastName}</Typography>
+        </Stack>
+        <Stack
+          spacing={1}
+          direction="row"
+          sx={{ border: "1px solid #C9C9C9", p: 2, borderRadius: "5px" }}
+        >
+          <Typography variant="subtitle">Email :</Typography>
+          <Typography variant="body1">{values.email}</Typography>
+        </Stack>
+        <Stack
+          spacing={1}
+          direction="row"
+          sx={{ border: "1px solid #C9C9C9", p: 2, borderRadius: "5px" }}
+        >
+          <Typography variant="subtitle">Phone Number :</Typography>
+          <Typography variant="body1">{values.phone}</Typography>
+        </Stack>
+        <Stack
+          spacing={1}
+          direction="row"
+          sx={{ border: "1px solid #C9C9C9", p: 2, borderRadius: "5px" }}
+        >
+          <Typography variant="subtitle">Address :</Typography>
+          <Typography variant="body1">{values.address}</Typography>
+        </Stack>
       </Stack>
     </form>
   );

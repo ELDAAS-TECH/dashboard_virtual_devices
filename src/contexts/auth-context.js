@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useReducer, useRef, useState } fr
 import PropTypes from "prop-types";
 import axios from "axios";
 import { set } from "nprogress";
+import jwtDecode from "src/utils/utils";
 
 const HANDLERS = {
   INITIALIZE: "INITIALIZE",
@@ -58,12 +59,13 @@ export const AuthProvider = (props) => {
 
   const initialize = async () => {
     const idToken = localStorage.getItem("idToken");
+    const decoded = jwtDecode(idToken);
 
     try {
       const config = {
         method: "get",
         maxBodyLength: Infinity,
-        url: `https://m1kiyejux4.execute-api.us-west-1.amazonaws.com/dev/api/v1/users/getUser/cmsathwik44@gmail.com`,
+        url: `https://m1kiyejux4.execute-api.us-west-1.amazonaws.com/dev/api/v1/users/getUser/${decoded?.email}`,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${idToken}`,
