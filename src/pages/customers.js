@@ -30,6 +30,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import axios from "axios";
+import getGlobalDeviceSettings from "src/services/settings/getGlobalDeviceSettings";
 
 const now = new Date();
 
@@ -285,6 +286,39 @@ const Page = () => {
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getGlobalDeviceSettings();
+
+        const responseBody = response?.data?.current_settings;
+        setBeaconData({
+          color: {
+            r: responseBody?.[0]?.R,
+            g: responseBody?.[0]?.G,
+            b: responseBody?.[0]?.B,
+            a: 1,
+          },
+          onTime: responseBody?.[0]?.ON_TIME,
+          offTime: responseBody?.[0]?.OFF_TIME,
+          duration: responseBody?.[0]?.DURATION,
+          brightness: responseBody?.[0]?.BRIGHTNESS,
+        });
+        setBuzzerData({
+          onTime: responseBody?.[1].ON_TIME,
+          offTime: responseBody?.[1].OFF_TIME,
+          duration: responseBody?.[1].DURATION,
+        });
+        setChargeControlData({
+          minBatteryPercentage: responseBody?.[1].charge_control,
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <>

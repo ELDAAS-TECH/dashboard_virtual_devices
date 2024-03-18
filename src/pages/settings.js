@@ -29,6 +29,8 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import FileUploadComponent from "src/sections/settings/FileUploadComponent";
 import { useAuthContext } from "src/contexts/auth-context";
+import getGlobalDeviceSettings from "src/services/settings/getGlobalDeviceSettings";
+import AlertPopup from "src/components/alert-popups/AlertPopup";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -65,6 +67,8 @@ function a11yProps(index) {
 
 const Page = () => {
   const [userId, setUserId] = useState(null);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [beaconData, setBeaconData] = useState({
     color: { r: 0, g: 0, b: 0, a: 1 },
     onTime: "",
@@ -165,40 +169,39 @@ const Page = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const idToken = localStorage.getItem("idToken");
-        const { username } = router.query;
-        // console.log(username, "iserName");
+        const response = await getGlobalDeviceSettings();
 
-        // if (!username) {
-        //   console.error("Username not provided in the URL.");
-        //   return;
-        // }
-        const response = await axios.post(
-          "https://m1kiyejux4.execute-api.us-west-1.amazonaws.com/dev/api/v1/devices/storeDeviceProps",
-          {
-            headers: {
-              Authorization: `Bearer ${idToken}`,
-            },
-          }
-        );
-
-        console.log(response, "global settings");
-        // const user = response.data["AWS-result"].find((user) => user.family_name === username);
-
-        // if (!user) {
-        //   console.error(`User with username ${username} not found.`);
-        //   return;
-        // }
-
-        // const obtainedUserId = user.sub;
-        // setUserId(obtainedUserId);
+        const responseBody = response?.data?.current_settings;
+        setBeaconData({
+          color: {
+            r: responseBody?.[0]?.R,
+            g: responseBody?.[0]?.G,
+            b: responseBody?.[0]?.B,
+            a: 1,
+          },
+          onTime: responseBody?.[0]?.ON_TIME,
+          offTime: responseBody?.[0]?.OFF_TIME,
+          duration: responseBody?.[0]?.DURATION,
+          brightness: responseBody?.[0]?.BRIGHTNESS,
+        });
+        setBuzzerData({
+          onTime: responseBody?.[1].ON_TIME,
+          offTime: responseBody?.[1].OFF_TIME,
+          duration: responseBody?.[1].DURATION,
+        });
+        setChargeControlData({
+          minBatteryPercentage: responseBody?.[1].charge_control,
+        });
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
     fetchData();
-  }, [username]);
+  }, []);
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   const handleSubmit = async () => {
     try {
@@ -210,7 +213,7 @@ const Page = () => {
         R: beaconData.color.r,
         G: beaconData.color.g,
         B: beaconData.color.b,
-        brightness: brightness,
+        brightness: beaconData?.brightness,
         led_ON_TIME: beaconData.onTime,
         led_OFF_TIME: beaconData.offTime,
         led_DURATION: beaconData.duration,
@@ -232,11 +235,16 @@ const Page = () => {
 
       const response = await axios.request(config);
 
+      if (response) {
+        setSnackbarMessage("Device Settings Updated Successfully ");
+        setSnackbarOpen(true);
+      }
       if (response.status !== 200) {
         throw new Error("Failed to save data");
       }
-      console.log("Data saved successfully");
     } catch (error) {
+      setSnackbarMessage("Error Updating data:");
+      setSnackbarOpen(true);
       console.error("Error saving data:", error);
     }
   };
@@ -299,9 +307,6 @@ const Page = () => {
         <CustomTabPanel value={value} index={0}>
           <Container maxWidth="lg">
             <Stack spacing={3}>
-              {/* <Typography variant="h4">
-              Settings
-            </Typography> */}
               <Grid container spacing={3}>
                 <Grid xs={12} md={6} lg={8}>
                   <AccountProfileDetails />
@@ -446,6 +451,13 @@ const Page = () => {
           <FileUploadComponent />
         </CustomTabPanel>
       </Box>
+      {snackbarOpen && (
+        <AlertPopup
+          snackbarOpen={snackbarOpen}
+          handleSnackbarClose={handleSnackbarClose}
+          snackbarMessage={snackbarMessage}
+        />
+      )}
     </>
   );
 };
