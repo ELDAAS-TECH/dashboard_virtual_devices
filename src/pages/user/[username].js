@@ -357,11 +357,11 @@ const UserPage = () => {
         }
       };
 
-      // const interval = setInterval(() => {
-      //   getTimeForCoordinates();
-      // }, 1000);
+      const interval = setInterval(() => {
+        getTimeForCoordinates();
+      }, 1000);
 
-      // return () => clearInterval(interval);
+      return () => clearInterval(interval);
     }, [geoCoordinates]);
 
     if (!currentTime) {

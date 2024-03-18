@@ -130,7 +130,7 @@ const Devicetable = () => {
             <TableCell variant="head" sx={{ backgroundColor: "#f3f3f3" }}>
               Battery Level
             </TableCell>
-            <TableCell> {datafordevicetable.b_batt_lvl}</TableCell>
+            <TableCell> {datafordevicetable.b_battery_percentage}</TableCell>
           </TableRow>
 
           <TableRow>
@@ -185,7 +185,7 @@ const Devicetable = () => {
             <TableCell variant="head" sx={{ backgroundColor: "#f3f3f3" }}>
               Battery Level
             </TableCell>
-            <TableCell>{datafordevicetable.g_batt_lvl}</TableCell>
+            <TableCell>{datafordevicetable.g_battery_percentage}</TableCell>
           </TableRow>
 
           <TableRow>
