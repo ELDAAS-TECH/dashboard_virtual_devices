@@ -213,7 +213,7 @@ const Page = () => {
         R: beaconData.color.r,
         G: beaconData.color.g,
         B: beaconData.color.b,
-        brightness: beaconData?.brightness,
+        led_BRIGHTNESS: beaconData?.brightness,
         led_ON_TIME: beaconData.onTime,
         led_OFF_TIME: beaconData.offTime,
         led_DURATION: beaconData.duration,

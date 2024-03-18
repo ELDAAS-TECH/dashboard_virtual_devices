@@ -316,7 +316,6 @@ const Materialtable = ({ onSelectedSubValuesChange }) => {
         const isGarageAlive =
           apiData && apiData.device_data && apiData.device_data.get_garage_alive_status === false;
 
-        console.log(email, "lastAt");
         router.push({
           pathname: `/user/${username}`,
           query: { isBeaconAlive, isGarageAlive, email },
