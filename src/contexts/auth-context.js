@@ -59,7 +59,10 @@ export const AuthProvider = (props) => {
 
   const initialize = async () => {
     const idToken = localStorage.getItem("idToken");
-    const decoded = jwtDecode(idToken);
+    let decoded;
+    if (idToken) {
+      decoded = jwtDecode(idToken);
+    }
 
     try {
       const config = {

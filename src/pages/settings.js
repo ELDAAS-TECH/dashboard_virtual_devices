@@ -65,9 +65,25 @@ function a11yProps(index) {
 
 const Page = () => {
   const [userId, setUserId] = useState(null);
+  const [beaconData, setBeaconData] = useState({
+    color: { r: 0, g: 0, b: 0, a: 1 },
+    onTime: "",
+    offTime: "",
+    duration: "",
+    brightness: "",
+  });
+
+  const [buzzerData, setBuzzerData] = useState({
+    onTime: "",
+    offTime: "",
+    duration: "",
+  });
+
   // const [brightness, setBrightness] = useState(50);
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
+    if (newValue === 1) {
+    }
     setValue(newValue);
   };
   const router = useRouter();
@@ -84,20 +100,6 @@ const Page = () => {
   const handleUserSettingsClick = () => {
     router.push("/settings/usersetting");
   };
-
-  const [beaconData, setBeaconData] = useState({
-    color: { r: 0, g: 0, b: 0, a: 1 },
-    onTime: "",
-    offTime: "",
-    duration: "",
-    brightness: "",
-  });
-
-  const [buzzerData, setBuzzerData] = useState({
-    onTime: "",
-    offTime: "",
-    duration: "",
-  });
 
   const handleColorChange = (color) => {
     setBeaconData((prevData) => ({
