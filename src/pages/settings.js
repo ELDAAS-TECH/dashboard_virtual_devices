@@ -264,7 +264,7 @@ const Page = () => {
             aria-label="basic tabs example"
           >
             <Tab
-              label="Profile Settings"
+              label="Profile "
               {...a11yProps(0)}
               sx={{
                 backgroundColor: value === 0 ? "rgba(229, 228, 226,0.7)" : "inherit",

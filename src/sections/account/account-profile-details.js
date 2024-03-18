@@ -14,6 +14,15 @@ import {
 } from "@mui/material";
 import { useAuthContext } from "src/contexts/auth-context";
 
+function formatPhoneNumber(phoneNumber) {
+  const cleaned = ("" + phoneNumber).replace(/\D/g, "");
+  const match = cleaned.match(/^(\d{1})(\d{3})(\d{3})(\d{4})$/);
+  if (match) {
+    return `+1 (${match[2]}) ${match[3]}-${match[4]}`;
+  }
+  return phoneNumber;
+}
+
 const states = [
   {
     value: "alabama",
@@ -40,7 +49,7 @@ export const AccountProfileDetails = () => {
     firstName: user?.given_name,
     lastName: user?.family_name,
     email: user?.email,
-    phone: user?.phone_number.slice(1),
+    phone: user?.phone_number,
     address: user?.address,
   });
 
@@ -88,7 +97,7 @@ export const AccountProfileDetails = () => {
           sx={{ border: "1px solid #C9C9C9", p: 2, borderRadius: "5px" }}
         >
           <Typography variant="subtitle">Phone Number :</Typography>
-          <Typography variant="body1">{values.phone}</Typography>
+          <Typography variant="body1">{formatPhoneNumber(values.phone || "")}</Typography>
         </Stack>
         <Stack
           spacing={1}
