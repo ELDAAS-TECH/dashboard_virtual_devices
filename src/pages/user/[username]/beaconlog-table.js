@@ -55,17 +55,25 @@ const Beaconlogtable = () => {
         setLoading(false);
         data["logs"].forEach((log) => {
           const onoff = log.ON_OFF_Time;
-          const onPattern = /ON#(\d+)/;
-          const onMatch = onoff.match(onPattern);
-          const onTime = onMatch ? onMatch[1] : null;
-          log.onTime = onTime;
 
+          // Handle ON time
+          const onPattern = /ON#(\d+)/;
+          const onMatch = onoff?.match(onPattern);
+          if (onMatch && onMatch[1] !== undefined) {
+            const onTime = onMatch[1];
+            log.onTime = onTime;
+          }
+
+          // Handle OFF time
           const offPattern = /OFF#(\d+)/;
-          const offmatch = onoff.match(offPattern);
-          const offTime = onMatch ? offmatch[1] : null;
-          log.offTime = offTime;
+          const offmatch = onoff?.match(offPattern);
+          if (offmatch && offmatch[1] !== undefined) {
+            const offTime = offmatch[1];
+            log.offTime = offTime;
+          }
         });
-        data["logs"].forEach((log) => {
+
+        data["logs"]?.forEach((log) => {
           const rgbstring = log.RGBValues;
           const rgbPattern = /([RGB])#(\d+)/g;
           let match;
@@ -75,7 +83,7 @@ const Beaconlogtable = () => {
             B: 0,
           };
 
-          while ((match = rgbPattern.exec(rgbstring)) !== null) {
+          while ((match = rgbPattern?.exec(rgbstring)) !== null) {
             const [, color, value] = match;
             log.rgbValues[color] = parseInt(value, 10);
           }
@@ -86,6 +94,7 @@ const Beaconlogtable = () => {
         data["logs"].forEach((log) => {
           const dateTime = new Date(log.date_time);
 
+          console.log(dateTime, "dateTime");
           const formattedDate = dateTime.toLocaleDateString();
           const formattedTime = dateTime.toLocaleTimeString();
           log.formattedDate = formattedDate;
